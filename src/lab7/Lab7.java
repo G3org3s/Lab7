@@ -37,9 +37,9 @@ public class Lab7 extends Application {
 
     /**
      * @param args the command line arguments
+     * GitHub UserName: G3org3s
      */
     public static void main(String[] args) {
-        // TODO code application logic here
         launch(args);
     }
 
@@ -68,14 +68,6 @@ public class Lab7 extends Application {
         objA.setCenterY(350);
         objA.setFill(Color.BLUE);
 
-//        Rectangle r2 = new Rectangle(100, 350, 300, 200);
-//        PathTransition pT = new PathTransition();
-//        pT.setDuration(Duration.millis(4000));
-//        pT.setNode(objA);
-//        pT.setPath(r2);
-//        pT.setCycleCount(1);
-//        pT.setAutoReverse(false);
-//        pT.play();
         Button start = new Button("Start");
         start.setTranslateX(0);
         start.setTranslateY(400);
@@ -88,12 +80,15 @@ public class Lab7 extends Application {
 
         Polygon objB = new Polygon(125, 100, 100, 150, 150, 150);
         objB.setOpacity(0);
+        objA.setOpacity(0);
         
         start.setOnAction(e -> {
             objB.setTranslateX(150);
             objB.setTranslateY(350);
+            objA.setOpacity(1);
             objB.setOpacity(1);
             objB.setRotate(180);
+
             TranslateTransition move1 = new TranslateTransition(Duration.seconds(2), objA);
             move1.setInterpolator(Interpolator.LINEAR);
             move1.setDuration(Duration.millis(2000));
@@ -125,12 +120,43 @@ public class Lab7 extends Application {
             move5.setToY(250);
             
             SequentialTransition seq = new SequentialTransition(move1, move2, move3, move4);
-            SequentialTransition seq2 = new SequentialTransition(move1, sc, rt, move5);
-            seq.play();
-            seq2.play();
+            SequentialTransition seq2 = new SequentialTransition(ft, sc, rt, move5);
+            seq.jumpTo(Duration.ZERO);
+            seq2.jumpTo(Duration.ZERO);
+            seq.playFromStart();
+            seq2.playFromStart();
+            
+            start.setDisable(true);
+            objB.setScaleX(2.0/3.0);
+            objB.setScaleY(2.0/3.0);
+            objB.setOpacity(0);
+            
+            seq.setOnFinished(ev -> {
+                start.setDisable(false); 
+            });
+            
+            reset.setOnAction(eh -> {
+                objB.setTranslateX(150);
+                objB.setTranslateY(350);
+                objB.setOpacity(1);
+                objB.setRotate(180);
+                seq.jumpTo(Duration.ZERO);
+                seq2.jumpTo(Duration.ZERO);
+                seq.playFromStart();
+                seq2.playFromStart();
+            });
+            
+            exit.setOnAction(ehh -> {
+            seq.jumpTo(Duration.ZERO);
+            seq2.jumpTo(Duration.ZERO);
+            seq.stop();
+            seq2.stop();
+            start.setDisable(false);
+            objB.setOpacity(0);
+            objA.setOpacity(0);
         });
-
-        
+            
+        });
 
         Pane root = new Pane(circle, line, objA, objB, start, reset, exit);
         Scene s = new Scene(root, 600, 600);
